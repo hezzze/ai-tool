@@ -20,11 +20,11 @@ export const useImageGeneration = () => {
         localStorage.setItem('generated_images', JSON.stringify(images));
     }, [images]);
 
-    const generate = async (prompt: string) => {
+    const generate = async (prompt: string, config?: { width?: number; height?: number }) => {
         setLoading(true);
         setError(null);
         try {
-            const url = await generateImage(prompt);
+            const url = await generateImage(prompt, config);
             const newImage: ImageItem = {
                 id: crypto.randomUUID(),
                 url,

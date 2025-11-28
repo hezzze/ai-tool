@@ -1,21 +1,56 @@
-import React, { useState } from 'react';
-import { Send, X, Loader2 } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Send, X, Loader2, Settings } from 'lucide-react';
 import { useImageGeneration, type ImageItem } from '../hooks/useImageGeneration';
 import { useLanguage } from '../contexts/LanguageContext';
 import './CreateImage.css';
+
+const ASPECT_RATIOS = [
+    { id: '21:9', label: '21:9', width: 1536, height: 640 },
+    { id: '16:9', label: '16:9', width: 1280, height: 720 },
+    { id: '3:2', label: '3:2', width: 1216, height: 832 },
+    { id: '4:3', label: '4:3', width: 1152, height: 896 },
+    { id: '1:1', label: '1:1', width: 1024, height: 1024 },
+    { id: '3:4', label: '3:4', width: 896, height: 1152 },
+    { id: '2:3', label: '2:3', width: 832, height: 1216 },
+    { id: '9:16', label: '9:16', width: 720, height: 1280 },
+];
 
 export const CreateImage: React.FC = () => {
     const { images, generate, loading, error } = useImageGeneration();
     const { t } = useLanguage();
     const [prompt, setPrompt] = useState('');
+    const [selectedRatio, setSelectedRatio] = useState(ASPECT_RATIOS[1]); // Default 16:9
     const [selectedImage, setSelectedImage] = useState<ImageItem | null>(null);
+    const [showRatioPopover, setShowRatioPopover] = useState(false);
+    const popoverRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
+                setShowRatioPopover(false);
+            }
+        };
+
+        if (showRatioPopover) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [showRatioPopover]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!prompt.trim() || loading) return;
 
-        await generate(prompt);
+        await generate(prompt, { width: selectedRatio.width, height: selectedRatio.height });
         setPrompt('');
+    };
+
+    const handleRatioSelect = (ratio: typeof ASPECT_RATIOS[0]) => {
+        setSelectedRatio(ratio);
+        setShowRatioPopover(false);
     };
 
     return (
@@ -35,14 +70,53 @@ export const CreateImage: React.FC = () => {
                             }
                         }}
                     />
-                    <button
-                        type="submit"
-                        className="generate-btn"
-                        disabled={!prompt.trim() || loading}
-                    >
-                        {loading ? <Loader2 className="spin" size={20} /> : <Send size={20} />}
-                        <span>{t.generate}</span>
-                    </button>
+                    <div className="form-actions">
+                        <div className="settings-popover-container" ref={popoverRef}>
+                            <button
+                                type="button"
+                                className="settings-btn"
+                                onClick={() => setShowRatioPopover(!showRatioPopover)}
+                                title={t.selectRatio || 'Select Ratio'}
+                            >
+                                <Settings size={20} />
+                            </button>
+                            {showRatioPopover && (
+                                <div className="ratio-popover">
+                                    <div className="popover-header">
+                                        <span className="popover-title">{t.selectRatio || 'Select Ratio'}</span>
+                                        <span className="current-ratio">{selectedRatio.label}</span>
+                                    </div>
+                                    <div className="ratio-grid">
+                                        {ASPECT_RATIOS.map((ratio) => (
+                                            <button
+                                                key={ratio.id}
+                                                className={`ratio-btn ${selectedRatio.id === ratio.id ? 'active' : ''}`}
+                                                onClick={() => handleRatioSelect(ratio)}
+                                                type="button"
+                                                title={`${ratio.label} (${ratio.width}x${ratio.height})`}
+                                            >
+                                                <div
+                                                    className="ratio-preview"
+                                                    style={{
+                                                        aspectRatio: ratio.id.replace(':', '/')
+                                                    }}
+                                                />
+                                                <span className="ratio-label">{ratio.label}</span>
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                        <button
+                            type="submit"
+                            className="generate-btn"
+                            disabled={!prompt.trim() || loading}
+                        >
+                            {loading ? <Loader2 className="spin" size={20} /> : <Send size={20} />}
+                            <span>{t.generate}</span>
+                        </button>
+                    </div>
                 </form>
                 {error && <div className="error-message">{error}</div>}
             </div>

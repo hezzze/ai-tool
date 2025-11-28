@@ -42,25 +42,173 @@
     color: var(--color-text-secondary);
 }
 
+.form-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    align-items: center;
+}
+
+.settings-popover-container {
+    position: relative;
+}
+
+.settings-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    color: var(--color-text-secondary);
+    padding: 8px;
+    border-radius: 8px;
+    transition: all var(--transition-fast);
+    border: 1px solid transparent;
+}
+
+.settings-btn:hover {
+    background-color: var(--color-bg-tertiary);
+    color: var(--color-text-primary);
+}
+
+.ratio-popover {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: var(--spacing-md);
+    min-width: 280px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    z-index: 100;
+    animation: popoverSlideIn 0.2s ease-out;
+}
+
+@keyframes popoverSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.popover-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.popover-title {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.current-ratio {
+    font-size: var(--font-size-sm);
+    color: var(--color-accent);
+    font-weight: 600;
+}
+
+.ratio-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-sm);
+}
+
+.ratio-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 10px 8px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    color: var(--color-text-secondary);
+}
+
+.ratio-btn:hover {
+    background-color: var(--color-bg-tertiary);
+    border-color: var(--color-text-secondary);
+    color: var(--color-text-primary);
+}
+
+.ratio-btn.active {
+    background-color: var(--color-bg-tertiary);
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+}
+
+.ratio-preview {
+    border: 2px solid currentColor;
+    border-radius: 2px;
+    width: 20px;
+    box-sizing: content-box;
+}
+
+.ratio-label {
+    font-size: 11px;
+    font-weight: 500;
+}
+
 .generate-btn {
     display: flex;
     align-items: center;
     gap: var(--spacing-sm);
-    background-color: var(--color-accent);
+    background: linear-gradient(135deg, var(--color-accent) 0%, #7c84ff 100%);
     color: white;
-    padding: 0 var(--spacing-lg);
-    border-radius: 8px;
+    padding: 12px var(--spacing-lg);
+    border-radius: 10px;
     font-weight: 600;
-    transition: background-color var(--transition-fast);
+    font-size: var(--font-size-md);
+    transition: all var(--transition-fast);
+    box-shadow: 0 4px 12px rgba(100, 108, 255, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.generate-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+    opacity: 0;
+    transition: opacity var(--transition-fast);
 }
 
 .generate-btn:hover:not(:disabled) {
-    background-color: var(--color-accent-hover);
+    background: linear-gradient(135deg, var(--color-accent-hover) 0%, #8c94ff 100%);
+    box-shadow: 0 6px 20px rgba(100, 108, 255, 0.4);
+    transform: translateY(-1px);
+}
+
+.generate-btn:hover:not(:disabled)::before {
+    opacity: 1;
+}
+
+.generate-btn:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(100, 108, 255, 0.3);
 }
 
 .generate-btn:disabled {
-    opacity: 0.5;
+    opacity: 0.6;
     cursor: not-allowed;
+    box-shadow: none;
 }
 
 .spin {

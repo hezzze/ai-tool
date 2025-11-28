@@ -18,6 +18,7 @@ export const translations = {
         version: 'Version 1.0.0',
         noImages: 'No images generated yet. Try creating one!',
         prompt: 'Prompt',
+        selectRatio: 'Select Ratio',
     },
     zh: {
         appTitle: '设计师 AI',
@@ -36,5 +37,6 @@ export const translations = {
         version: '版本 1.0.0',
         noImages: '尚未生成图像。试着创建一个！',
         prompt: '提示词',
+        selectRatio: '选择比例',
     }
 };
