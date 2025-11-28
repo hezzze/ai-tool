@@ -2,7 +2,7 @@ export type Language = 'en' | 'zh';
 
 export const translations = {
     en: {
-        appTitle: 'Designer AI',
+        appTitle: 'ZZC AI Tools',
         createImage: 'Create Image',
         describeImage: 'Describe Image',
         help: 'Help',
@@ -21,7 +21,7 @@ export const translations = {
         selectRatio: 'Select Ratio',
     },
     zh: {
-        appTitle: '设计师 AI',
+        appTitle: 'ZZC AI 小助手',
         createImage: '创建图像',
         describeImage: '描述图像',
         help: '帮助',
