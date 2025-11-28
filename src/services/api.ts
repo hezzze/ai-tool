@@ -7,7 +7,6 @@ export const generateImage = async (prompt: string): Promise<string> => {
         method: 'POST',
         headers: {
             'x-api-key': 'zzc-test',
-            'referer': 'http://localhost:8000/',
             'User-Agent': 'Apifox/1.0.0 (https://apifox.com)',
             'Content-Type': 'application/json'
         },
