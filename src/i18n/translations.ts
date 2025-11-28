@@ -19,6 +19,7 @@ export const translations = {
         noImages: 'No images generated yet. Try creating one!',
         prompt: 'Prompt',
         selectRatio: 'Select Ratio',
+        reset: 'Start Over',
     },
     zh: {
         appTitle: 'ZZC AI 小助手',
@@ -31,12 +32,13 @@ export const translations = {
         uploadTitle: '上传图像',
         uploadDesc: '拖放或点击选择',
         changeImage: '更换图像',
-        generatedCaption: '生成的描述',
+        generatedCaption: '生成的描述 （英文）',
         helpTitle: '关于设计师 AI',
         helpContent: '设计师 AI 是一个强大的创作工具。使用“创建图像”通过文本提示生成视觉效果，使用“描述图像”获取现有图像的详细说明。',
         version: '版本 1.0.0',
         noImages: '尚未生成图像。试着创建一个！',
         prompt: '提示词',
         selectRatio: '选择比例',
+        reset: '重新开始',
     }
 };

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Upload, Image as ImageIcon, Loader2 } from 'lucide-react';
+import { Upload, Image as ImageIcon, Loader2, RotateCcw } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { imageToText } from '../services/api';
 import './DescribeImage.css';
 
 export const DescribeImage: React.FC = () => {
@@ -8,7 +9,9 @@ export const DescribeImage: React.FC = () => {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [caption, setCaption] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
+    const [dragActive, setDragActive] = useState(false);
 
     const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -17,25 +20,72 @@ export const DescribeImage: React.FC = () => {
             const url = URL.createObjectURL(file);
             setPreviewUrl(url);
             setCaption(null);
+            setError(null);
         }
     };
 
-    const handleGenerateCaption = () => {
+    const handleDrag = (e: React.DragEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (e.type === "dragenter" || e.type === "dragover") {
+            setDragActive(true);
+        } else if (e.type === "dragleave") {
+            setDragActive(false);
+        }
+    };
+
+    const handleDrop = (e: React.DragEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setDragActive(false);
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+            const file = e.dataTransfer.files[0];
+            if (file.type.startsWith('image/')) {
+                setSelectedFile(file);
+                const url = URL.createObjectURL(file);
+                setPreviewUrl(url);
+                setCaption(null);
+                setError(null);
+            }
+        }
+    };
+
+    const handleReset = () => {
+        setSelectedFile(null);
+        setPreviewUrl(null);
+        setCaption(null);
+        setError(null);
+    };
+
+    const handleGenerateCaption = async () => {
         if (!selectedFile) return;
 
         setLoading(true);
-        // Simulate API call
-        setTimeout(() => {
-            setCaption("A detailed description of the image would appear here. This is a placeholder for the Joycaption integration.");
+        setError(null);
+        setCaption(null);
+
+        try {
+            const text = await imageToText(selectedFile);
+            setCaption(text);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Failed to generate caption');
+            console.error('Error generating caption:', err);
+        } finally {
             setLoading(false);
-        }, 2000);
+        }
     };
 
     return (
         <div className="describe-image-page">
             <div className="upload-section">
                 {!previewUrl ? (
-                    <label className="upload-area">
+                    <label 
+                        className={`upload-area ${dragActive ? 'drag-active' : ''}`}
+                        onDragEnter={handleDrag}
+                        onDragLeave={handleDrag}
+                        onDragOver={handleDrag}
+                        onDrop={handleDrop}
+                    >
                         <input
                             type="file"
                             accept="image/*"
@@ -69,7 +119,15 @@ export const DescribeImage: React.FC = () => {
                                 {loading ? <Loader2 className="spin" size={20} /> : <ImageIcon size={20} />}
                                 <span>{t.describeImage}</span>
                             </button>
+                            <button 
+                                className="reset-btn"
+                                onClick={handleReset}
+                                title={t.reset || "Start Over"}
+                            >
+                                <RotateCcw size={20} />
+                            </button>
                         </div>
+                        {error && <div className="error-message">{error}</div>}
                     </div>
                 )}
             </div>
