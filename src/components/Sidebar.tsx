@@ -16,13 +16,17 @@ interface SidebarProps {
     onNavigate: (view: 'create' | 'describe') => void;
     collapsed: boolean;
     onToggleCollapse: () => void;
+    mobileOpen?: boolean;
+    onCloseMobile?: () => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
     activeView,
     onNavigate,
     collapsed,
-    onToggleCollapse
+    onToggleCollapse,
+    mobileOpen = false,
+    onCloseMobile
 }) => {
     const { t, language, setLanguage } = useLanguage();
     const [showHelp, setShowHelp] = useState(false);
@@ -33,12 +37,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
     return (
         <>
-            <div className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
+            <div className={`sidebar ${collapsed ? 'collapsed' : ''} ${mobileOpen ? 'mobile-open' : ''}`}>
                 <div className="sidebar-header">
-                    {!collapsed && <h1 className="app-title">{t.appTitle}</h1>}
-                    <button className="collapse-btn" onClick={onToggleCollapse}>
-                        {collapsed ? <Menu size={20} /> : <ChevronLeft size={20} />}
-                    </button>
+                    <h1 className="app-title">{t.appTitle}</h1>
+                    <div className="sidebar-controls">
+                        {mobileOpen && (
+                            <button className="collapse-btn mobile-close-btn" onClick={onCloseMobile}>
+                                <X size={20} />
+                            </button>
+                        )}
+                        <button className="collapse-btn desktop-collapse-btn" onClick={onToggleCollapse}>
+                            {collapsed ? <Menu size={20} /> : <ChevronLeft size={20} />}
+                        </button>
+                    </div>
                 </div>
 
                 <nav className="sidebar-nav">
@@ -48,7 +59,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         title={t.createImage}
                     >
                         <ImagePlus size={20} />
-                        {!collapsed && <span>{t.createImage}</span>}
+                        <span>{t.createImage}</span>
                     </button>
 
                     <button
@@ -57,7 +68,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         title={t.describeImage}
                     >
                         <Type size={20} />
-                        {!collapsed && <span>{t.describeImage}</span>}
+                        <span>{t.describeImage}</span>
                     </button>
                 </nav>
 
@@ -68,7 +79,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         onClick={() => setShowHelp(true)}
                     >
                         <HelpCircle size={20} />
-                        {!collapsed && <span>{t.help}</span>}
+                        <span>{t.help}</span>
                     </button>
                     <button
                         className="nav-item"
@@ -76,7 +87,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         onClick={toggleLanguage}
                     >
                         <Languages size={20} />
-                        {!collapsed && <span>{language === 'en' ? 'English' : '中文'}</span>}
+                        <span>{language === 'en' ? 'English' : '中文'}</span>
                     </button>
                 </div>
             </div>

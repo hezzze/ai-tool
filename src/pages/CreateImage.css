@@ -385,3 +385,43 @@
     font-size: var(--font-size-sm);
     color: var(--color-text-secondary);
 }
+
+@media (max-width: 768px) {
+    .create-image-page {
+        gap: var(--spacing-md);
+    }
+
+    .prompt-form {
+        flex-direction: column;
+    }
+
+    .prompt-input {
+        height: 80px;
+    }
+
+    .form-actions {
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .generate-btn {
+        flex: 1;
+        justify-content: center;
+    }
+
+    .ratio-popover {
+        right: auto;
+        left: 0;
+        width: 100%;
+        min-width: unset;
+        max-width: 300px;
+    }
+
+    .ratio-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .masonry-grid {
+        column-count: 1;
+    }
+}

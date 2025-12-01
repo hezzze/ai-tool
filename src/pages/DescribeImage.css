@@ -194,3 +194,28 @@
     font-size: var(--font-size-sm);
     text-align: center;
 }
+
+@media (max-width: 768px) {
+    .describe-image-page {
+        gap: var(--spacing-md);
+    }
+
+    .upload-section {
+        min-height: 200px;
+    }
+
+    .preview-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .change-image-btn,
+    .generate-caption-btn,
+    .reset-btn {
+        width: 100%;
+    }
+
+    .caption-box p {
+        font-size: var(--font-size-md);
+    }
+}
