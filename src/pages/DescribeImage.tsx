@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Upload, Image as ImageIcon, Loader2, RotateCcw } from 'lucide-react';
+import { Upload, Image as ImageIcon, Loader2, RotateCcw, Copy, Check } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { imageToText } from '../services/api';
 import './DescribeImage.css';
@@ -12,6 +12,7 @@ export const DescribeImage: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [dragActive, setDragActive] = useState(false);
+    const [copied, setCopied] = useState(false);
 
     const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -75,11 +76,22 @@ export const DescribeImage: React.FC = () => {
         }
     };
 
+    const handleCopyCaption = async () => {
+        if (!caption) return;
+        try {
+            await navigator.clipboard.writeText(caption);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        } catch (err) {
+            console.error('Failed to copy:', err);
+        }
+    };
+
     return (
         <div className="describe-image-page">
             <div className="upload-section">
                 {!previewUrl ? (
-                    <label 
+                    <label
                         className={`upload-area ${dragActive ? 'drag-active' : ''}`}
                         onDragEnter={handleDrag}
                         onDragLeave={handleDrag}
@@ -119,7 +131,7 @@ export const DescribeImage: React.FC = () => {
                                 {loading ? <Loader2 className="spin" size={20} /> : <ImageIcon size={20} />}
                                 <span>{t.describeImage}</span>
                             </button>
-                            <button 
+                            <button
                                 className="reset-btn"
                                 onClick={handleReset}
                                 title={t.reset || "Start Over"}
@@ -134,7 +146,17 @@ export const DescribeImage: React.FC = () => {
 
             {caption && (
                 <div className="result-section">
-                    <h3>{t.generatedCaption}</h3>
+                    <div className="result-header">
+                        <h3>{t.generatedCaption}</h3>
+                        <button
+                            className="copy-btn"
+                            onClick={handleCopyCaption}
+                            title={copied ? 'Copied!' : 'Copy to clipboard'}
+                        >
+                            {copied ? <Check size={20} /> : <Copy size={20} />}
+                            <span>{copied ? 'Copied!' : 'Copy'}</span>
+                        </button>
+                    </div>
                     <div className="caption-box">
                         <p>{caption}</p>
                     </div>

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, X, Loader2, Settings } from 'lucide-react';
+import { Send, X, Loader2, Settings, Download } from 'lucide-react';
 import { useImageGeneration, type ImageItem } from '../hooks/useImageGeneration';
 import { useLanguage } from '../contexts/LanguageContext';
 import './CreateImage.css';
@@ -51,6 +51,25 @@ export const CreateImage: React.FC = () => {
     const handleRatioSelect = (ratio: typeof ASPECT_RATIOS[0]) => {
         setSelectedRatio(ratio);
         setShowRatioPopover(false);
+    };
+
+    const handleDownload = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (!selectedImage) return;
+        try {
+            const response = await fetch(selectedImage.url);
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `generated-image-${Date.now()}.png`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        } catch (error) {
+            console.error('Download failed:', error);
+        }
     };
 
     return (
@@ -147,9 +166,14 @@ export const CreateImage: React.FC = () => {
             {selectedImage && (
                 <div className="image-modal" onClick={() => setSelectedImage(null)}>
                     <div className="modal-content" onClick={e => e.stopPropagation()}>
-                        <button className="close-btn" onClick={() => setSelectedImage(null)}>
-                            <X size={24} />
-                        </button>
+                        <div className="modal-actions">
+                            <button className="icon-btn" onClick={handleDownload} title="Download">
+                                <Download size={24} />
+                            </button>
+                            <button className="icon-btn" onClick={() => setSelectedImage(null)} title="Close">
+                                <X size={24} />
+                            </button>
+                        </div>
                         <img src={selectedImage.url} alt={selectedImage.prompt} className="modal-image" />
                         <div className="modal-details">
                             <h3>{t.prompt}</h3>
