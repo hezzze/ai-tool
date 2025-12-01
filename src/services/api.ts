@@ -18,7 +18,6 @@ export const generateImage = async (prompt: string, config?: GenerateImageConfig
         method: 'POST',
         headers: {
             'x-api-key': apiKey,
-            'User-Agent': 'Apifox/1.0.0 (https://apifox.com)',
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
@@ -52,8 +51,7 @@ export const imageToText = async (file: File): Promise<string> => {
     const response = await fetch('https://api.zzcreation.com/web/image_to_text', {
         method: 'POST',
         headers: {
-            'x-api-key': apiKey,
-            'User-Agent': 'Apifox/1.0.0 (https://apifox.com)',
+            'x-api-key': apiKey
         },
         body: formData
     });
