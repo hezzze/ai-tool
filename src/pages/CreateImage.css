@@ -421,15 +421,29 @@
     }
 
     .ratio-popover {
-        right: auto;
+        right: 0;
         left: 0;
-        width: 100%;
+        margin: 0 auto;
+        width: calc(100vw - 32px);
         min-width: unset;
-        max-width: 300px;
+        max-width: 360px;
     }
 
     .ratio-grid {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-md);
+    }
+
+    .ratio-btn {
+        padding: 12px 10px;
+    }
+
+    .ratio-preview {
+        width: 24px;
+    }
+
+    .ratio-label {
+        font-size: 12px;
     }
 
     .masonry-grid {
