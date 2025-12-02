@@ -5,52 +5,65 @@ import { useLanguage } from '../contexts/LanguageContext';
 import './CreateImage.css';
 
 const ASPECT_RATIOS = [
-    { id: '21:9', label: '21:9', width: 1536, height: 640 },
+    { id: '21:9', label: '21:9', width: 1512, height: 648 },
     { id: '16:9', label: '16:9', width: 1280, height: 720 },
-    { id: '3:2', label: '3:2', width: 1216, height: 832 },
-    { id: '4:3', label: '4:3', width: 1152, height: 896 },
+    { id: '3:2', label: '3:2', width: 1200, height: 800 },
+    { id: '4:3', label: '4:3', width: 1200, height: 900 },
     { id: '1:1', label: '1:1', width: 1024, height: 1024 },
-    { id: '3:4', label: '3:4', width: 896, height: 1152 },
-    { id: '2:3', label: '2:3', width: 832, height: 1216 },
+    { id: '3:4', label: '3:4', width: 900, height: 1200 },
+    { id: '2:3', label: '2:3', width: 800, height: 1200 },
     { id: '9:16', label: '9:16', width: 720, height: 1280 },
 ];
+
+const MODEL_OPTIONS = [
+    { id: 'qwen_t2i_fast', labelKey: 'qwenImage' as const },
+    { id: 'z_image_t2i', labelKey: 'zImageTurbo' as const },
+] as const;
 
 export const CreateImage: React.FC = () => {
     const { images, generate, loading, error } = useImageGeneration();
     const { t } = useLanguage();
     const [prompt, setPrompt] = useState('');
     const [selectedRatio, setSelectedRatio] = useState(ASPECT_RATIOS[1]); // Default 16:9
+    const [selectedModel, setSelectedModel] = useState<'qwen_t2i_fast' | 'z_image_t2i'>('z_image_t2i');
     const [selectedImage, setSelectedImage] = useState<ImageItem | null>(null);
-    const [showRatioPopover, setShowRatioPopover] = useState(false);
+    const [showConfigPopover, setShowConfigPopover] = useState(false);
     const popoverRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
-                setShowRatioPopover(false);
+                setShowConfigPopover(false);
             }
         };
 
-        if (showRatioPopover) {
+        if (showConfigPopover) {
             document.addEventListener('mousedown', handleClickOutside);
         }
 
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, [showRatioPopover]);
+    }, [showConfigPopover]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!prompt.trim() || loading) return;
 
-        await generate(prompt, { width: selectedRatio.width, height: selectedRatio.height });
+        await generate(prompt, {
+            width: selectedRatio.width,
+            height: selectedRatio.height,
+            workflow: selectedModel
+        });
         setPrompt('');
     };
 
     const handleRatioSelect = (ratio: typeof ASPECT_RATIOS[0]) => {
         setSelectedRatio(ratio);
-        setShowRatioPopover(false);
+    };
+
+    const handleModelSelect = (modelId: 'qwen_t2i_fast' | 'z_image_t2i') => {
+        setSelectedModel(modelId);
     };
 
     const handleDownload = async (e: React.MouseEvent) => {
@@ -94,13 +107,28 @@ export const CreateImage: React.FC = () => {
                             <button
                                 type="button"
                                 className="settings-btn"
-                                onClick={() => setShowRatioPopover(!showRatioPopover)}
+                                onClick={() => setShowConfigPopover(!showConfigPopover)}
                                 title={t.selectRatio || 'Select Ratio'}
                             >
                                 <Settings size={20} />
                             </button>
-                            {showRatioPopover && (
+                            {showConfigPopover && (
                                 <div className="ratio-popover">
+                                    <div className="popover-header">
+                                        <span className="popover-title">{t.selectModel || 'Select Model'}</span>
+                                    </div>
+                                    <div className="model-selector">
+                                        {MODEL_OPTIONS.map((model) => (
+                                            <button
+                                                key={model.id}
+                                                className={`model-btn ${selectedModel === model.id ? 'active' : ''}`}
+                                                onClick={() => handleModelSelect(model.id)}
+                                                type="button"
+                                            >
+                                                {t[model.labelKey]}
+                                            </button>
+                                        ))}
+                                    </div>
                                     <div className="popover-header">
                                         <span className="popover-title">{t.selectRatio || 'Select Ratio'}</span>
                                         <span className="current-ratio">{selectedRatio.label}</span>

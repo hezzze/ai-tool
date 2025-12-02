@@ -5,6 +5,7 @@ export interface GenerateImageResponse {
 export interface GenerateImageConfig {
     width?: number;
     height?: number;
+    workflow?: 'qwen_t2i_fast' | 'z_image_t2i';
 }
 
 export const generateImage = async (prompt: string, config?: GenerateImageConfig): Promise<string> => {

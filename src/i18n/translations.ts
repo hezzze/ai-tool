@@ -19,6 +19,9 @@ export const translations = {
         noImages: 'No images generated yet. Try creating one!',
         prompt: 'Prompt',
         selectRatio: 'Select Ratio',
+        selectModel: 'Select Model',
+        qwenImage: 'Qwen Image',
+        zImageTurbo: 'z-Image Turbo',
         reset: 'Start Over',
     },
     zh: {
@@ -39,6 +42,9 @@ export const translations = {
         noImages: '尚未生成图像。试着创建一个！',
         prompt: '提示词',
         selectRatio: '选择比例',
+        selectModel: '选择模型',
+        qwenImage: 'Qwen Image',
+        zImageTurbo: 'z-Image Turbo',
         reset: '重新开始',
     }
 };

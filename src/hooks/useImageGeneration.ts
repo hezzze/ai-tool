@@ -20,7 +20,7 @@ export const useImageGeneration = () => {
         localStorage.setItem('generated_images', JSON.stringify(images));
     }, [images]);
 
-    const generate = async (prompt: string, config?: { width?: number; height?: number }) => {
+    const generate = async (prompt: string, config?: { width?: number; height?: number; workflow?: 'qwen_t2i_fast' | 'z_image_t2i' }) => {
         setLoading(true);
         setError(null);
         try {
